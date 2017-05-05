@@ -1,0 +1,21 @@
+{
+  "name": "json-diff-cli",
+  "version": "0.3.0",
+  "description": "json-diff-cli",
+  "main": "index.js",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j-tester/json-diff-cli.git"
+  },
+  "keywords": [
+    "json-diff-cli"
+  ],
+  "author": "Manthan Mallikarjun",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/j-tester/json-diff-cli/issues"
+  },
+  "homepage": "https://github.com/j-tester/json-diff-cli#readme"
+}
