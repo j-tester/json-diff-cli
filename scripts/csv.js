@@ -153,7 +153,7 @@ const csvScript = async (args, callback) => {
 
       console.log(output);
     } catch (err) {
-      console.log(chalk.red(err.toString()));
+      console.log(chalk.red(err.toString()), '\n');
     }
   }
 
