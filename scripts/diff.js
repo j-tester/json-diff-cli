@@ -25,6 +25,10 @@ const diffScript = async (args, callback) => {
     }
   }
 
+  if (args.options.ignore) {
+    diff.differences = diff.differences.filter(row => !args.options.ignore.includes(row.key));
+  }
+
   const t = new Table();
   diff.differences.forEach((difference) => {
     Object.keys(difference).forEach((key) => {

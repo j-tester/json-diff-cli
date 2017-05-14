@@ -112,6 +112,11 @@ const csvScript = async (args, callback) => {
         }
       }
 
+      if (row.ignore) {
+        const ignore = row.ignore.split('|');
+        diff.differences = diff.differences.filter(diffs => !ignore.includes(diffs.key));
+      }
+
       const t = new Table();
       diff.differences.forEach((difference) => {
         Object.keys(difference).forEach((key) => {
