@@ -157,7 +157,9 @@ const csvScript = async (args, callback) => {
     }
   }
 
-  await core.writeCSV(args.options.output, allDiffs);
+  if (args.options.output) {
+    await core.writeCSV(args.options.output, allDiffs);
+  }
   callback();
 };
 
