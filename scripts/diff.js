@@ -57,7 +57,7 @@ const diffScript = async (args, callback) => {
         return result;
       });
     }
-    core.writeCSV(args.options.output, diff.differences);
+    await core.writeCSV(args.options.output, diff.differences);
   }
   const output = t.toString();
 
