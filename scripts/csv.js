@@ -71,6 +71,7 @@ const csvScript = async (args, callback) => {
     const sortKey = row.sortKey;
     const body = row.body;
     const timeout = args.options.timeout;
+    const skipcertificate = row.skipCertificate || false;
 
     const header = row.headers;
     const headers = [];
@@ -81,12 +82,23 @@ const csvScript = async (args, callback) => {
       });
     }
 
+    const ignore = row.ignore;
+    const ignores = [];
+    if (ignore) {
+      const list = ignore.split('|');
+      list.forEach((splitIgnore) => {
+        ignores.push(splitIgnore);
+      });
+    }
+
     const options = {
       method,
       sortKey,
       body,
       headers,
       timeout,
+      skipcertificate,
+      ignore: ignores,
     };
 
     try {
@@ -110,11 +122,6 @@ const csvScript = async (args, callback) => {
             diff: 'updated',
           });
         }
-      }
-
-      if (row.ignore) {
-        const ignore = row.ignore.split('|');
-        diff.differences = diff.differences.filter(diffs => !ignore.includes(diffs.key));
       }
 
       const t = new Table();

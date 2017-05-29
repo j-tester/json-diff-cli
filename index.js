@@ -31,6 +31,7 @@ vorpal
   .option('-b, --body <body>', 'Request body (only for POST)', body, [])
   .option('-k, --sortkey <key>', 'Sort any array of json objects by the specified key')
   .option('-t, --timeout <milliseconds>', 'timeout for requests. defaults to 5 seconds', 5000)
+  .option('-c, --skipcertificate', 'skip checking of https certificates')
   .action(diffScript);
 
 vorpal
