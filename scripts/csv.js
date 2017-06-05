@@ -73,6 +73,10 @@ const csvScript = async (args) => {
     const timeout = args.timeout;
     const skipcertificate = row.skipCertificate || false;
 
+    if (url1.charAt(0) === '#') {
+      continue; // eslint-disable-line
+    }
+
     const header = row.headers;
     const headers = [];
     if (header) {
