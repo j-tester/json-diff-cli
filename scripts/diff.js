@@ -3,14 +3,13 @@ const chalk = require('chalk');
 const core = require('json-diff-core');
 const Table = require('easy-table');
 
-const diffScript = async (args, callback) => {
-  const leftURL = args.leftURL;
+const diffScript = async (args) => {
+  const leftUrl = args.leftURL;
   const rightURL = args.rightURL;
-  const options = args.options;
 
-  const diff = await core.diffURLs(leftURL, rightURL, options);
+  const diff = await core.diffURLs(leftUrl, rightURL, args);
 
-  if (args.options.diffheaders) {
+  if (args.diffheaders) {
     const headersDiff = await core.diffJSON(diff.leftHeaders, diff.rightHeaders);
     if (headersDiff.length !== 0) {
       if (diff.differences[0].diff === 'none') {
@@ -34,7 +33,7 @@ const diffScript = async (args, callback) => {
     t.newRow();
   });
 
-  if (args.options.output) {
+  if (args.output) {
     diff.differences.map((data) => {
       const result = data;
       result.id = 0;
@@ -57,15 +56,13 @@ const diffScript = async (args, callback) => {
         return result;
       });
     }
-    await core.writeCSV(args.options.output, diff.differences);
+    await core.writeCSV(args.output, diff.differences);
   }
   const output = t.toString();
 
   console.log(output);
-  callback();
 };
 
-module.exports = (args, callback) => diffScript(args, callback).catch((err) => {
+module.exports = args => diffScript(args).catch((err) => {
   console.log(chalk.red(err.toString()));
-  callback();
 });

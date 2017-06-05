@@ -47,7 +47,7 @@ const readFirstLine = csvPath => new Promise((resolve, reject) => {
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const csvScript = async (args, callback) => {
+const csvScript = async (args) => {
   const csvPath = args.path;
 
   if (!fs.existsSync(csvPath)) {
@@ -70,7 +70,7 @@ const csvScript = async (args, callback) => {
     const method = row.method;
     const sortKey = row.sortKey;
     const body = row.body;
-    const timeout = args.options.timeout;
+    const timeout = args.timeout;
     const skipcertificate = row.skipCertificate || false;
 
     const header = row.headers;
@@ -102,14 +102,14 @@ const csvScript = async (args, callback) => {
     };
 
     try {
-      if (args.options.sleep) {
-        await sleep(args.options.sleep);
+      if (args.sleep) {
+        await sleep(args.sleep);
       }
       console.log(chalk.green(`${url1} vs ${url2}`));
 
       const diff = await core.diffURLs(url1, url2, options);
 
-      if (args.options.diffheaders) {
+      if (args.diffheaders) {
         const headersDiff = await core.diffJSON(diff.leftHeaders, diff.rightHeaders);
         if (headersDiff.length !== 0) {
           if (diff.differences[0].diff === 'none') {
@@ -133,7 +133,7 @@ const csvScript = async (args, callback) => {
         t.newRow();
       });
 
-      if (args.options.output) {
+      if (args.output) {
         diff.differences.map((diffs) => {
           const result = diffs;
           result.id = i;
@@ -169,13 +169,11 @@ const csvScript = async (args, callback) => {
     }
   }
 
-  if (args.options.output) {
-    await core.writeCSV(args.options.output, allDiffs);
+  if (args.output) {
+    await core.writeCSV(args.output, allDiffs);
   }
-  callback();
 };
 
-module.exports = (args, callback) => csvScript(args, callback).catch((err) => {
+module.exports = args => csvScript(args).catch((err) => {
   console.log(chalk.red(err.toString()));
-  callback();
 });

@@ -1,46 +1,91 @@
 #!/usr/bin/env node
-const Vorpal = require('vorpal');
+
+const yargs = require('yargs');
 
 const diffScript = require('./scripts/diff');
-const csvScript = require('./scripts/csv.js');
+const csvScript = require('./scripts/csv');
 
-const vorpal = Vorpal();
+yargs.usage('$0 <cmd> [args]');
 
-const headers = (val, arr) => {
-  arr.push(val);
-  return arr;
-};
+yargs
+  .command('diff <leftURL> <rightURL> [options]', 'diffs the json response of two URLs.', {
+    output: {
+      alias: 'o',
+      describe: 'print the output to a CSV file',
+      type: 'string',
+    },
+    method: {
+      alias: 'm',
+      default: 'GET',
+      describe: 'request method (GET, POST, or DELETE)',
+      type: 'string',
+    },
+    diffheaders: {
+      alias: 'x',
+      default: false,
+      describe: 'diff the headers as well as the body',
+      type: 'boolean',
+    },
+    sortkey: {
+      alias: 'k',
+      describe: 'sort any array of json objects by the specified key',
+      type: 'string',
+    },
+    timeout: {
+      alias: 't',
+      describe: 'timeout for requests. defaults to 5 seconds',
+      default: 5000,
+      type: 'number',
+    },
+    skipcertificate: {
+      alias: 'c',
+      describe: 'skip checking of https certificates',
+      type: 'string',
+    },
+    headers: {
+      alias: 'H',
+      describe: 'attach a header to the request. separate multiple headers with a space: -H "Accept: text/plain" "Accept-Charset: utf-8"',
+      type: 'array',
+    },
+    ignore: {
+      alias: 'i',
+      describe: 'ignore the provided key(s). separate multiple keys with a space: -i "key1" "key2"',
+      type: 'array',
+    },
+    body: {
+      alias: 'b',
+      describe: 'request body (only for POST) separate multiple body parts with a space: -b "username: testing" "password: 123"',
+      type: 'array',
+    },
+  }, diffScript);
 
-const ignore = (val, arr) => {
-  arr.push(val);
-  return arr;
-};
+yargs
+  .command('csv <path> [options]', 'diffs all urls in a csv file', {
+    output: {
+      alias: 'o',
+      describe: 'print the output to a CSV file',
+      type: 'string',
+    },
+    sleep: {
+      alias: 's',
+      default: 0,
+      describe: 'sleep before every request (in milliseconds)',
+      type: 'number',
+    },
+    diffheaders: {
+      alias: 'x',
+      default: false,
+      describe: 'diff the headers as well as the body',
+      type: 'boolean',
+    },
+    timeout: {
+      alias: 't',
+      describe: 'timeout for requests. defaults to 5 seconds',
+      default: 5000,
+      type: 'number',
+    },
+  }, csvScript);
 
-const body = (val, arr) => {
-  arr.push(val);
-  return arr;
-};
+yargs.help();
 
-vorpal
-  .command('diff <leftURL> <rightURL>', 'diffs the json response of two URLs.')
-  .option('-o, --output <file>', 'print the output to a CSV file')
-  .option('-x, --diffheaders', 'diff the headers as well as the body')
-  .option('-H, --headers <string>', 'attach a header to the request. You may string multipe headers together by passing along more -H or --header options', headers, [])
-  .option('-i, --ignore <key>', 'ignore the provided key. You may string multipe ignore keys together by passing along more -i or --ignore options', ignore, [])
-  .option('-m, --method <method>', 'request method (GET, POST, or DELETE)', 'GET')
-  .option('-b, --body <body>', 'Request body (only for POST)', body, [])
-  .option('-k, --sortkey <key>', 'Sort any array of json objects by the specified key')
-  .option('-t, --timeout <milliseconds>', 'timeout for requests. defaults to 5 seconds', 5000)
-  .option('-c, --skipcertificate', 'skip checking of https certificates')
-  .action(diffScript);
-
-vorpal
-  .command('csv <path>', 'diffs all urls in a csv file')
-  .option('-o, --output <file>', 'print the output to a CSV file')
-  .option('-s, --sleep <milliseconds>', 'sleep before every request (in milliseconds)')
-  .option('-x, --diffheaders', 'diff the headers as well as the body')
-  .option('-t, --timeout <milliseconds>', 'timeout for requests. defaults to 5 seconds', 5000)
-  .action(csvScript);
-
-vorpal
-  .parse(process.argv);
+yargs.argv; // eslint-disable-line
