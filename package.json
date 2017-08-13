@@ -4,7 +4,7 @@
   "description": "json-diff-cli",
   "main": "index.js",
   "scripts": {
-    "test": "yarn lint",
+    "test": "npm run lint",
     "lint": "eslint *.js scripts/."
   },
   "bin": {
