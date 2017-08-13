@@ -1,18 +1,19 @@
 {
   "name": "json-diff-cli",
-  "version": "0.3.4",
+  "version": "0.0.0-development",
   "description": "json-diff-cli",
   "main": "index.js",
   "scripts": {
     "test": "npm run lint",
-    "lint": "eslint *.js scripts/."
+    "lint": "eslint *.js scripts/.",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "bin": {
     "json-diff": "index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/j-tester/json-diff-cli.git"
+    "url": "https://github.com/j-tester/json-diff-cli.git"
   },
   "keywords": [
     "json-diff-cli"
@@ -24,9 +25,11 @@
   },
   "homepage": "https://github.com/j-tester/json-diff-cli#readme",
   "devDependencies": {
+    "condition-circle": "^1.5.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "semantic-release": "^6.3.6"
   },
   "dependencies": {
     "chalk": "^1.1.3",
@@ -34,5 +37,8 @@
     "easy-table": "^1.1.0",
     "json-diff-core": "^0.0.4",
     "yargs": "^8.0.1"
+  },
+  "release": {
+    "verifyConditions": "condition-circle"
   }
 }
