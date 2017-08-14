@@ -26,10 +26,15 @@ yargs
       describe: 'diff the headers as well as the body',
       type: 'boolean',
     },
-    sortkey: {
+    sortKey: {
       alias: 'k',
       describe: 'sort any array of json objects by the specified key',
       type: 'string',
+    },
+    sortKeys: {
+      alias: 'K',
+      describe: 'multiple sort keys. separate multiple keys with a space: -K "id" "userId"',
+      type: 'array',
     },
     timeout: {
       alias: 't',
@@ -56,6 +61,11 @@ yargs
       alias: 'b',
       describe: 'request body (only for POST) separate multiple body parts with a space: -b "username: testing" "password: 123"',
       type: 'array',
+    },
+    arraysortkey: {
+      alias: 'a',
+      describe: 'sort nested arrays by the sort key, defaults to id',
+      type: 'string',
     },
   }, diffScript);
 

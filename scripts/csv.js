@@ -86,6 +86,19 @@ const csvScript = async (args) => {
       });
     }
 
+    const sortKeysInput = row.sortKeys;
+    const sortKeys = [];
+    if (sortKeysInput) {
+      const list = sortKeysInput.split('|');
+      list.forEach((splitSortKeys) => {
+        sortKeys.push(splitSortKeys);
+      });
+    }
+    if (sortKey) {
+      sortKeys.unshift(sortKey);
+    }
+    sortKeys.push('id');
+
     const ignore = row.ignore;
     const ignores = [];
     if (ignore) {
@@ -98,6 +111,7 @@ const csvScript = async (args) => {
     const options = {
       method,
       sortKey,
+      sortKeys,
       body,
       headers,
       timeout,
