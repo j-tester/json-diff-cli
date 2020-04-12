@@ -72,6 +72,7 @@ const csvScript = async (args) => {
     const body = row.body;
     const timeout = args.timeout;
     const skipcertificate = row.skipCertificate || false;
+    const expectedStatusCode = row.expectedStatusCode ? parseInt(row.expectedStatusCode, 10) : null;
 
     if (url1.charAt(0) === '#') {
       continue; // eslint-disable-line
@@ -99,6 +100,15 @@ const csvScript = async (args) => {
     }
     sortKeys.push('id');
 
+    const skipHeadersInputs = row.skipHeaders || '';
+    const skipHeaders = [];
+    if (skipHeadersInputs) {
+      const list = skipHeadersInputs.split('|');
+      list.forEach((splitHeaders) => {
+        skipHeaders.push(splitHeaders);
+      });
+    }
+
     const ignore = row.ignore;
     const ignores = [];
     if (ignore) {
@@ -116,6 +126,8 @@ const csvScript = async (args) => {
       headers,
       timeout,
       skipcertificate,
+      expectedStatusCode,
+      skipHeaders,
       ignore: ignores,
     };
 
@@ -128,8 +140,12 @@ const csvScript = async (args) => {
       const diff = await core.diffURLs(url1, url2, options);
 
       if (args.diffheaders) {
+        options.skipHeaders.forEach((h) => {
+          delete diff.leftHeaders[h];
+          delete diff.rightHeaders[h];
+        });
         const headersDiff = await core.diffJSON(diff.leftHeaders, diff.rightHeaders);
-        if (headersDiff.length !== 0) {
+        if (headersDiff.length !== 0 && headersDiff[0].diff !== 'none') {
           if (diff.differences[0].diff === 'none') {
             diff.differences.splice(0, 1);
           }
@@ -183,6 +199,7 @@ const csvScript = async (args) => {
 
       console.log(output);
     } catch (err) {
+      console.log(err);
       console.log(chalk.red(err.toString()), '\n');
     }
   }

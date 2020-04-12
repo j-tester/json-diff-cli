@@ -120,6 +120,8 @@ url1, url2, method, headers, body, sortKey, ignore
 
 **`ignore`**: keys to ignore. Pipe delimted. (`|`)
 
+**`expectedStatusCode`**: Expected status code (defaults to 200)
+
 ```csv
 url1,url2
 https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/a.json,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/b.json
