@@ -9,43 +9,44 @@ const parseCSV = (csvPath) => {
   const result = [];
   return new Promise((resolve, reject) => {
     csv({ noheader: false })
-    .fromFile(csvPath)
-    .on('json', (obj) => {
-      result.push(obj);
-    })
-    .on('done', (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
+      .fromFile(csvPath)
+      .on('json', (obj) => {
+        result.push(obj);
+      })
+      .on('done', (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
   });
 };
 
-const readFirstLine = csvPath => new Promise((resolve, reject) => {
-  const rs = fs.createReadStream(csvPath, { encoding: 'utf8' });
-  let acc = '';
-  let pos = 0;
-  let index;
-  rs.on('data', (chunk) => {
-    index = chunk.indexOf('\n');
-    acc += chunk;
-    if (index !== -1) {
-      rs.close();
-    } else {
-      pos += chunk.length;
-    }
-  })
-  .on('close', () => {
-    resolve(acc.slice(0, pos + index));
-  })
-  .on('error', (err) => {
-    reject(err);
+const readFirstLine = (csvPath) =>
+  new Promise((resolve, reject) => {
+    const rs = fs.createReadStream(csvPath, { encoding: 'utf8' });
+    let acc = '';
+    let pos = 0;
+    let index;
+    rs.on('data', (chunk) => {
+      index = chunk.indexOf('\n');
+      acc += chunk;
+      if (index !== -1) {
+        rs.close();
+      } else {
+        pos += chunk.length;
+      }
+    })
+      .on('close', () => {
+        resolve(acc.slice(0, pos + index));
+      })
+      .on('error', (err) => {
+        reject(err);
+      });
   });
-});
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const csvScript = async (args) => {
   const csvPath = args.path;
@@ -72,6 +73,21 @@ const csvScript = async (args) => {
     const body = row.body;
     const timeout = args.timeout;
     const skipcertificate = row.skipCertificate || false;
+    const expectedStatusCode = row.expectedStatusCode ? parseInt(row.expectedStatusCode, 10) : null;
+    let customDiff = row.customDiff || '{}';
+    let customCompare = row.customCompare || '{}';
+
+    try {
+      customDiff = JSON.parse(customDiff);
+    } catch (err) {
+      throw new Error('invalid json provided to customDiff');
+    }
+
+    try {
+      customCompare = JSON.parse(customCompare);
+    } catch (err) {
+      throw new Error('invalid json provided to customCompare');
+    }
 
     if (url1.charAt(0) === '#') {
       continue; // eslint-disable-line
@@ -99,6 +115,15 @@ const csvScript = async (args) => {
     }
     sortKeys.push('id');
 
+    const skipHeadersInputs = row.skipHeaders || '';
+    const skipHeaders = [];
+    if (skipHeadersInputs) {
+      const list = skipHeadersInputs.split('|');
+      list.forEach((splitHeaders) => {
+        skipHeaders.push(splitHeaders);
+      });
+    }
+
     const ignore = row.ignore;
     const ignores = [];
     if (ignore) {
@@ -116,7 +141,11 @@ const csvScript = async (args) => {
       headers,
       timeout,
       skipcertificate,
+      expectedStatusCode,
+      skipHeaders,
       ignore: ignores,
+      customDiff,
+      customCompare,
     };
 
     try {
@@ -128,8 +157,12 @@ const csvScript = async (args) => {
       const diff = await core.diffURLs(url1, url2, options);
 
       if (args.diffheaders) {
+        options.skipHeaders.forEach((h) => {
+          delete diff.leftHeaders[h];
+          delete diff.rightHeaders[h];
+        });
         const headersDiff = await core.diffJSON(diff.leftHeaders, diff.rightHeaders);
-        if (headersDiff.length !== 0) {
+        if (headersDiff.length !== 0 && headersDiff[0].diff !== 'none') {
           if (diff.differences[0].diff === 'none') {
             diff.differences.splice(0, 1);
           }
@@ -183,6 +216,7 @@ const csvScript = async (args) => {
 
       console.log(output);
     } catch (err) {
+      console.log(err);
       console.log(chalk.red(err.toString()), '\n');
     }
   }
@@ -192,6 +226,7 @@ const csvScript = async (args) => {
   }
 };
 
-module.exports = args => csvScript(args).catch((err) => {
-  console.log(chalk.red(err.toString()));
-});
+module.exports = (args) =>
+  csvScript(args).catch((err) => {
+    console.log(chalk.red(err.toString()));
+  });
