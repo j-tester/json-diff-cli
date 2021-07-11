@@ -61,8 +61,13 @@ const diffScript = async (args) => {
   const output = t.toString();
 
   console.log(output);
+
+  if (args.failOnDiff && (diff.differences.length > 1 || diff.differences[0].diff !== 'none')) {
+    process.exit(1);
+  }
 };
 
-module.exports = args => diffScript(args).catch((err) => {
-  console.log(chalk.red(err.toString()));
-});
+module.exports = (args) =>
+  diffScript(args).catch((err) => {
+    console.log(chalk.red(err.toString()));
+  });
