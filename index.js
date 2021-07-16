@@ -16,11 +16,25 @@ yargs.command(
       describe: 'print the output to a CSV file',
       type: 'string',
     },
+    quiet: {
+      alias: 'q',
+      describe: 'silences the console output',
+      type: 'boolean',
+      default: false,
+    },
     failOnDiff: {
       alias: 'f',
       default: false,
       describe: 'return exit code 1 if there is a difference',
       type: 'boolean',
+    },
+    expectedStatusCode: {
+      describe: 'expected status codes of the requests',
+      type: 'string',
+    },
+    customCompare: {
+      describe: 'custom compare json as string',
+      type: 'string',
     },
     method: {
       alias: 'm',
