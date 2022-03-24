@@ -1,6 +1,6 @@
 {
   "name": "json-diff-cli",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "json-diff-cli",
   "main": "index.js",
   "scripts": {
