@@ -3,6 +3,7 @@
 json-diff-cli allows you to diff the JSON of two urls and see what the differences are. This tool can be used for testing purposes or to simply check that things are working.
 
 # Usage
+
 ```
 Commands:
 
@@ -13,15 +14,19 @@ Commands:
 ```
 
 ## DIFF
+
 ### diff the json between two urls and print to the console.
+
 ```
 jsondiff diff <leftURL> <rightURL> [options]
 ```
+
 **`leftURL`**: The base URL you would like to compare to.
 
 **`rightURL`**: The new/updated URL. The JSON from `rightURL` will be compared with the `leftURL` and changes will be printed out to the console.
 
 ### Options
+
 ```
 Usage: diff [options] <leftURL> <rightURL>
 
@@ -31,6 +36,7 @@ Options:
 
   --help                        output usage information
   -o, --output <file>           print the output to a CSV file
+  -f, --failOnDiff              return exit code 1 if there is a difference
   -x, --diffheaders             diff the headers as well as the body
   -H, --headers <string>        attach a header to the request. You may string multipe headers together by passing along more -H or --header options
   -i, --ignore <key>            ignore the provided key. You may string multipe ignore keys together by passing along more -i or --ignore options
@@ -43,7 +49,9 @@ Options:
 ### Example
 
 #### Input
+
 ##### leftJSON
+
 ```json
 {
   "foo": {
@@ -54,7 +62,9 @@ Options:
   }
 }
 ```
+
 ##### rightJSON
+
 ```json
 {
   "foo": {
@@ -67,6 +77,7 @@ Options:
 ```
 
 #### Output
+
 ```
 key        left          right         diff
 ---------  ------------  ------------  -------
@@ -76,6 +87,7 @@ foo.bar.a  true          false         updated
 ```
 
 ## CSV
+
 ### diff the json between urls in a csv file, print to the console, and output into a csv file.
 
 ```
@@ -85,6 +97,7 @@ jsondiff csv <input> [options]
 **`input`**: Path to the input file (CSV format).
 
 ### Options
+
 ```
 Usage: csv [options] <path>
 
@@ -100,8 +113,11 @@ Options:
 ```
 
 ### Example
+
 #### Input
+
 **The first line in the CSV file must have the following headers. You may chose to omit any of them except for `ur1`, and `url2`**
+
 ```
 url1, url2, method, headers, body, sortKey, ignore
 ```
@@ -130,7 +146,9 @@ https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/
 ```
 
 #### Output
+
 ##### csv
+
 ```
 id,left url,left response time,right url,right response time,key,left value,right value,difference,status
 0,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/a.json,1197,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/b.json,675,foo.bar.c,undefined,now you dont,added,fail
@@ -143,7 +161,9 @@ id,left url,left response time,right url,right response time,key,left value,righ
 2,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/a.json,396,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/b.json,386,foo.bar.b,now u see me,undefined,deleted,fail
 2,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/a.json,396,https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/b.json,386,foo.bar.a,true,none,updated,fail
 ```
+
 ##### console
+
 ```
 https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/a.json vs https://gist.githubusercontent.com/nahtnam/920171eeef10e911a6ee7698d9c226ae/raw/bdd86427b8c807e149251d4737d2886620f7fcdc/b.json
 key        left          right         diff

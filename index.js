@@ -7,11 +7,33 @@ const csvScript = require('./scripts/csv');
 
 yargs.usage('$0 <cmd> [args]');
 
-yargs
-  .command('diff <leftURL> <rightURL> [options]', 'diffs the json response of two URLs.', {
+yargs.command(
+  'diff <leftURL> <rightURL> [options]',
+  'diffs the json response of two URLs.',
+  {
     output: {
       alias: 'o',
       describe: 'print the output to a CSV file',
+      type: 'string',
+    },
+    quiet: {
+      alias: 'q',
+      describe: 'silences the console output',
+      type: 'boolean',
+      default: false,
+    },
+    failOnDiff: {
+      alias: 'f',
+      default: false,
+      describe: 'return exit code 1 if there is a difference',
+      type: 'boolean',
+    },
+    expectedStatusCode: {
+      describe: 'expected status codes of the requests',
+      type: 'string',
+    },
+    customCompare: {
+      describe: 'custom compare json as string',
       type: 'string',
     },
     method: {
@@ -49,7 +71,8 @@ yargs
     },
     headers: {
       alias: 'H',
-      describe: 'attach a header to the request. separate multiple headers with a space: -H "Accept: text/plain" "Accept-Charset: utf-8"',
+      describe:
+        'attach a header to the request. separate multiple headers with a space: -H "Accept: text/plain" "Accept-Charset: utf-8"',
       type: 'array',
     },
     ignore: {
@@ -59,7 +82,8 @@ yargs
     },
     body: {
       alias: 'b',
-      describe: 'request body (only for POST) separate multiple body parts with a space: -b "username: testing" "password: 123"',
+      describe:
+        'request body (only for POST) separate multiple body parts with a space: -b "username: testing" "password: 123"',
       type: 'array',
     },
     arraysortkey: {
@@ -67,10 +91,14 @@ yargs
       describe: 'sort nested arrays by the sort key, defaults to id',
       type: 'string',
     },
-  }, diffScript);
+  },
+  diffScript,
+);
 
-yargs
-  .command('csv <path> [options]', 'diffs all urls in a csv file', {
+yargs.command(
+  'csv <path> [options]',
+  'diffs all urls in a csv file',
+  {
     output: {
       alias: 'o',
       describe: 'print the output to a CSV file',
@@ -94,7 +122,9 @@ yargs
       default: 5000,
       type: 'number',
     },
-  }, csvScript);
+  },
+  csvScript,
+);
 
 yargs.help();
 
