@@ -7,7 +7,20 @@ const diffScript = async (args) => {
   const leftUrl = args.leftURL;
   const rightURL = args.rightURL;
 
-  const diff = await core.diffURLs(leftUrl, rightURL, args);
+  const expectedStatusCode = args.expectedStatusCode ? parseInt(args.expectedStatusCode, 10) : null;
+  let customCompare = args.customCompare || '{}';
+
+  try {
+    customCompare = JSON.parse(customCompare);
+  } catch (err) {
+    throw new Error('invalid json provided to customCompare');
+  }
+
+  const diff = await core.diffURLs(leftUrl, rightURL, {
+    ...args,
+    customCompare,
+    expectedStatusCode,
+  });
 
   if (args.diffheaders) {
     const headersDiff = await core.diffJSON(diff.leftHeaders, diff.rightHeaders);
@@ -60,9 +73,17 @@ const diffScript = async (args) => {
   }
   const output = t.toString();
 
-  console.log(output);
+  if (!args.quiet) {
+    console.log(output);
+  }
+
+  if (args.failOnDiff && (diff.differences.length > 1 || diff.differences[0].diff !== 'none')) {
+    process.exit(1);
+  }
 };
 
-module.exports = args => diffScript(args).catch((err) => {
-  console.log(chalk.red(err.toString()));
-});
+module.exports = (args) =>
+  diffScript(args).catch((err) => {
+    console.log(chalk.red(err.toString()));
+    process.exit(1);
+  });
